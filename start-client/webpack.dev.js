@@ -11,20 +11,17 @@ const config = {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'public')
-    },
-    
+    contentBase: path.resolve(__dirname, 'public'),
     historyApiFallback: true,
     compress: true,
     open: false,
-    onBeforeSetupMiddleware: function(devServer) {
-      devServer.app.get('/metadata/client', function(req, res) {
+    before: function(app, server, compiler) {
+      app.get('/metadata/client', function(req, res) {
         setTimeout(() => {
           res.json(mock)
         }, 800)
       })
-      devServer.app.get('/starter.zip', function(req, res) {
+      app.get('/starter.zip', function(req, res) {
         fs.readFile(path.resolve('./dev/starter.mock.zip'), (err, data) => {
           if (err) return sendError(err, res)
           setTimeout(() => {
